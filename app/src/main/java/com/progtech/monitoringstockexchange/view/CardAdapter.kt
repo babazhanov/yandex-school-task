@@ -2,7 +2,9 @@ package com.progtech.monitoringstockexchange.ui.view
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,8 +16,8 @@ import com.progtech.monitoringstockexchange.viewmodel.StocksViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CardAdapter(private val context: Context, private val viewModel: StocksViewModel)
-    : RecyclerView.Adapter<CardAdapter.CardVH>() {
+class CardAdapter(private val context: Context, private val viewModel: StocksViewModel) :
+    RecyclerView.Adapter<CardAdapter.CardVH>() {
 
     private val cards = ArrayList<Card>()
 
@@ -27,6 +29,15 @@ class CardAdapter(private val context: Context, private val viewModel: StocksVie
         return CardVH(binding)
     }
 
+    fun putImage(url: String, parent: View, imageView: ImageView) {
+        Glide.with(context).clear(parent)
+        Glide.with(context)
+            .load(url)
+            .placeholder(R.drawable.ic_image)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(imageView)
+    }
+
     override fun onBindViewHolder(holder: CardVH, position: Int) {
         val card = cards[position]
         val view = holder.itemView
@@ -34,34 +45,61 @@ class CardAdapter(private val context: Context, private val viewModel: StocksVie
         holder.binding.card = card
         holder.binding.isOdd = (position % 2) == 0
 
-        viewModel.getCompanyProfile(card.symbol).observeForever {
-            holder.binding.tvFullName.text = it.name
-
-            Glide.with(context).clear(view)
-            Glide.with(context)
-                .load(it.logo)
-                .placeholder(R.drawable.ic_image)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.binding.ivBrandIcon)
+        card.image?.let {
+            putImage(it, view, holder.binding.ivBrandIcon)
         }
 
+        card.companyName?.let {
+            holder.binding.tvFullName.text = it
+        }
+
+        viewModel.getCompanyProfile(card.symbol).observeForever { profile ->
+            card.companyName = profile.name
+            holder.binding.tvFullName.text = profile.name
+
+            card.image = profile.logo
+            card.image?.let {
+                putImage(it, view, holder.binding.ivBrandIcon)
+            }
+        }
+
+        fillPrice(card, holder)
+
         viewModel.getQuote(card.symbol).observeForever {
-            holder.binding.tvPrice.text = String.format(
+            card.price = String.format(
                 Locale.getDefault(), "$%.2f", it.c
             )
 
             val delta = it.c - it.pc
             var deltaPercents = 0.0
             if (it.pc != 0.0) deltaPercents = delta / it.pc * 100.0
-            holder.binding.tvDeltaPrice.text = String.format(
+            card.deltaPrice = String.format(
                 Locale.getDefault(), "$%.2f (%.2f%%)", delta, deltaPercents
             )
 
-            if (delta < 0)
-                holder.binding.tvDeltaPrice.setTextColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.red)
-                )
+            card.deltaPriceSign = delta > 0
+
+            fillPrice(card, holder)
         }
+    }
+
+    fun fillPrice(card: Card, holder: CardVH) {
+        card.price?.let {
+            holder.binding.tvPrice.text = it
+        }
+
+        card.deltaPrice?.let {
+            holder.binding.tvDeltaPrice.text = it
+        }
+
+        if (card.deltaPriceSign)
+            holder.binding.tvDeltaPrice.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, R.color.green)
+            )
+        else
+            holder.binding.tvDeltaPrice.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, R.color.red)
+            )
     }
 
     override fun getItemCount(): Int {
