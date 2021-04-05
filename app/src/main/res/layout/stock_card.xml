@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="card"
+            type="com.progtech.monitoringstockexchange.model.Card" />
+
+        <variable
+            name="isOdd"
+            type="boolean" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@{isOdd ? @color/bg_card : @android:color/white}"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_brand_icon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/brand_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@{card.symbol}"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@id/iv_brand_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="YNDX" />
+
+            <TextView
+                android:id="@+id/tv_full_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat_semibold"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_delta_price"
+                app:layout_constraintStart_toEndOf="@id/iv_brand_icon"
+                app:layout_constraintTop_toBottomOf="@id/tv_name"
+                tools:text="Yandex, LLC" />
+
+            <ImageView
+                android:id="@+id/iv_star"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="4dp"
+                android:contentDescription="@string/starred"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                app:layout_constraintStart_toEndOf="@+id/tv_name"
+                app:srcCompat="@drawable/ic_gray_star" />
+
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="4 762,1 \u20bd" />
+
+            <TextView
+                android:id="@+id/tv_delta_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textColor="@color/green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_price"
+                tools:text="+55 \u20bd (1,15%)" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

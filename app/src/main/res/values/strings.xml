@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Monitoring Stock Exchange</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">Stocks</string>
+    <string name="tab_text_2">Favourite</string>
+    <string name="brand_icon">brand icon</string>
+    <string name="starred">starred</string>
 </resources>
